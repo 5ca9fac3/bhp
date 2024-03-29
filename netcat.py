@@ -26,6 +26,7 @@ class Netcat:
         self.args = args
         self.buffer = buffer
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     def run(self):
         if self.args.listen:
@@ -93,7 +94,7 @@ class Netcat:
             while True:
                 try:
                     client_socket.send(b'BHP #> ')
-                    while '/n' not in cmd_buffer:
+                    while '\n' not in cmd_buffer.decode():
                         cmd_buffer += client_socket.recv(64)
                     response = execute(cmd_buffer.decode())
                     if response:
